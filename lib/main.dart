@@ -38,6 +38,17 @@ class ColorGameState extends State<ColorGame> {
   /// Music Controller
   MusicPlay musicController = new MusicPlay();
 
+  int x = 0;
+
+  @override
+  void setState(fn) {
+    // TODO: implement setState
+    super.setState(fn);
+    if (x == 0){
+      musicController.backgroundPlay();
+      x++;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -52,7 +63,6 @@ class ColorGameState extends State<ColorGame> {
         child: Icon(Icons.refresh),
         onPressed: () {
           setState(() {
-            musicController.shufflePlay();
             score.clear();
             seed++;
           });
@@ -127,7 +137,7 @@ class ColorGameState extends State<ColorGame> {
                     score[emoji] = true;
                   });
                   if (score.length == 6) {
-                    musicController.fullScoreplay();
+                    musicController.fullScorePlay();
                   } else {
                     musicController.correctPlay();
                   }
@@ -158,7 +168,7 @@ class MusicPlay {
     _musicController.play('shuffle.mp3');
   }
 
-  void fullScoreplay() {
+  void fullScorePlay() {
     _musicController.play('eventually.mp3');
   }
 }

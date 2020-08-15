@@ -38,11 +38,11 @@ class ColorGameState extends State <ColorGame> with WidgetsBindingObserver {
     print(state);
 
     if (state == AppLifecycleState.paused) {
-      //_mp.backgroundPause();
+      _mp.backgroundPause();
     }
 
     if(state == AppLifecycleState.resumed){
-     // _mp.backgroundResume();
+      _mp.backgroundResume();
     }
 
   }

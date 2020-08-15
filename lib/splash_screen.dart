@@ -6,11 +6,11 @@ class SplashScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return SplashScreenState();
+    return _SplashScreenState();
   }
 }
 
-class SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> {
 
   MusicPlay mp = MusicPlay();
 
@@ -20,19 +20,19 @@ class SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: new Center(
         child: RaisedButton(
-          padding: EdgeInsets.all(15),
-          color: Colors.redAccent,
-          elevation: 10,
+            padding: EdgeInsets.all(15),
+            color: Colors.redAccent,
+            elevation: 10,
             child: Text ('Start' , style: TextStyle(
-            fontSize: 35,
-            color: Colors.white
-          ),),
-          onPressed: () {
-            mp.backgroundPlay();
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => ColorGame()
-            ));
-          }
+                fontSize: 35,
+                color: Colors.white
+            ),),
+            onPressed: () {
+              mp.backgroundPlay();
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => ColorGame()
+              ));
+            }
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:try_draggable_ibrahim_app/splash_screen.dart';
-
+import 'package:kids_iq/views/splash_screen.dart';
 
 void main() {
   runApp(

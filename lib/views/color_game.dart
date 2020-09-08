@@ -2,55 +2,60 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:try_draggable_ibrahim_app/music_play.dart';
+import 'package:kids_iq/music_play.dart';
 
 class ColorGame extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return ColorGameState();
+    return _ColorGameState();
   }
 }
 
-class ColorGameState extends State <ColorGame> with WidgetsBindingObserver {
+class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
+  // to increment the score
+  int scoreIncrement = 0;
+  // Music Controller
+  MusicPlay _mp = new MusicPlay();
 
-  /// Adding the state observer
+  // Adding the state observer
   @override
-  void initState(){
+  void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
 
-  /// Removing the observer
+  // Removing the observer
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  /// Music Controller
-  MusicPlay _mp = new MusicPlay();
-
-  /// Observer conditions
+  // Observer conditions
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state){
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     print(state);
-
     if (state == AppLifecycleState.paused) {
       _mp.backgroundPause();
     }
-
-    if(state == AppLifecycleState.resumed){
+    if (state == AppLifecycleState.resumed) {
       _mp.backgroundResume();
     }
-
   }
 
-  /// Score Map
-  Map<String, bool> score = {};
+  // Score Map to bool draggable or not
+  Map<String, bool> score = {
+    '🍏': false,
+    '🍋': false,
+    '🍅': false,
+    '🍇': false,
+    '🥥': false,
+    '🥕': false,
+  };
 
-  /// To compare the DragTarget
+  // To compare the Draggable with the DragTarget
   final Map emojiAndColor = {
     '🍏': Colors.green,
     '🍋': Colors.yellow,
@@ -60,22 +65,8 @@ class ColorGameState extends State <ColorGame> with WidgetsBindingObserver {
     '🥕': Colors.orange
   };
 
-  /// Random seed
+  // Random seed
   int seed = 0;
-
-  /// Background play condition
-  int x = 0;
-
-  @override
-  void setState(fn) {
-    // TODO: implement setState
-    super.setState(fn);
-    if (x == 0){
-      //musicController.backgroundPlay();
-      x++;
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,15 +78,23 @@ class ColorGameState extends State <ColorGame> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink,
-        title:
-        Text('Score ${score.length} / 6', style: TextStyle(fontSize: 15)),
+        //title: Text('Score ${score.length}/6', style: TextStyle(fontSize: 15)),
+        title: Text('Score $scoreIncrement/6', style: TextStyle(fontSize: 15)),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pink,
         child: Icon(Icons.refresh),
         onPressed: () {
           setState(() {
-            score.clear();
+            score = {
+              '🍏': false,
+              '🍋': false,
+              '🍅': false,
+              '🍇': false,
+              '🥥': false,
+              '🥕': false,
+            }; // to be false
+            scoreIncrement = 0;
             seed++;
           });
         },
@@ -108,27 +107,22 @@ class ColorGameState extends State <ColorGame> with WidgetsBindingObserver {
             //crossAxisAlignment: CrossAxisAlignment.start,
             children: emojiAndColor.keys.map((emoji) {
               return Container(
-                height: 65,
-                child: Draggable<String>(
-                    data: emoji,
-                    child: score[emoji] == true
-                        ? Material(
-                        color: Colors.transparent,
-                        child: Text('✅', style: TextStyle(fontSize: 50)))
-                        : Material(
-                        color: Colors.transparent,
-                        child: Text(emoji, style: TextStyle(fontSize: 50))),
-                    feedback: score[emoji] == true
-                        ? Material(
-                        color: Colors.transparent,
-                        child: Text('✅', style: TextStyle(fontSize: 50)))
-                        : Material(
-                        color: Colors.transparent,
-                        child: Text(emoji, style: TextStyle(fontSize: 50))),
-                    childWhenDragging: Container()),
+                height: 75,
+                child: score[emoji]
+                    ? Text('✅', style: TextStyle(fontSize: 65))
+                    : Draggable<String>(
+                        data: emoji,
+                        child: Material(
+                            color: Colors.transparent,
+                            child: Text(emoji, style: TextStyle(fontSize: 65))),
+                        feedback: Material(
+                            color: Colors.transparent,
+                            child: Text(emoji, style: TextStyle(fontSize: 65))),
+                        childWhenDragging: Container(),
+                      ),
               );
             }).toList()
-              ..shuffle(Random(seed + 2)),
+              ..shuffle(Random(seed ++)),
           ),
 
           /// Colors Column
@@ -142,15 +136,15 @@ class ColorGameState extends State <ColorGame> with WidgetsBindingObserver {
                   if (score[emoji] == true) {
                     return Container(
                       alignment: Alignment.center,
-                      height: 65,
-                      width: 150,
+                      height: 75,
+                      width: 200,
                       color: Colors.white,
                       child: Text('Correct!'),
                     );
                   } else {
                     return Container(
-                      height: 65,
-                      width: 150,
+                      height: 75,
+                      width: 200,
                       color: emojiAndColor[emoji],
                     );
                   }
@@ -166,9 +160,10 @@ class ColorGameState extends State <ColorGame> with WidgetsBindingObserver {
                 }, // or (data) => data == emoji,
                 onAccept: (data) {
                   setState(() {
+                    scoreIncrement++;
                     score[emoji] = true;
                   });
-                  if (score.length == 6) {
+                  if (scoreIncrement == 6) {
                     _mp.fullScorePlay();
                   } else {
                     _mp.correctPlay();

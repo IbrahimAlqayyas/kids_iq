@@ -1,4 +1,4 @@
-# try_draggable_ibrahim_app
+# kid_iq
 
 A new Flutter application.
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kids_iq/music_play.dart';
-import 'package:kids_iq/views/color_game.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -17,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    //_mp.backgroundPlay();
   }
 
   @override
@@ -52,8 +52,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
             ),
             onPressed: () {
               _mp.backgroundPlay();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ColorGame()));
+              Navigator.pushReplacementNamed(context, '/color_game');
             }),
       ),
     );

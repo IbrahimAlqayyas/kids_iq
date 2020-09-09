@@ -45,7 +45,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
     }
   }
 
-  // Score Map to bool draggable or not
+  // Score Map to bool draggable or fixed
   Map<String, bool> score = {
     '🍏': false,
     '🍋': false,
@@ -107,7 +107,9 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
             //crossAxisAlignment: CrossAxisAlignment.start,
             children: emojiAndColor.keys.map((emoji) {
               return Container(
+                //decoration: BoxDecoration(color: Colors.pink),
                 height: 75,
+                //width: 80,
                 child: score[emoji]
                     ? Text('✅', style: TextStyle(fontSize: 65))
                     : Draggable<String>(
@@ -122,7 +124,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                       ),
               );
             }).toList()
-              ..shuffle(Random(seed ++)),
+              ..shuffle(Random(seed+1)),
           ),
 
           /// Colors Column
@@ -131,33 +133,24 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
             //crossAxisAlignment: CrossAxisAlignment.end,
             children: emojiAndColor.keys.map((emoji) {
               return DragTarget<String>(
-                builder: (BuildContext context, List<String> incoming,
-                    List rejected) {
+                builder: (BuildContext context, List<String> incoming,List rejected) {
                   if (score[emoji] == true) {
                     return Container(
                       alignment: Alignment.center,
-                      height: 75,
+                      height: 80,
                       width: 200,
-                      color: Colors.white,
-                      child: Text('Correct!'),
+                      color: Colors.transparent,
+                      child: Text('Correct!', style: TextStyle(fontSize: 18),),
                     );
                   } else {
                     return Container(
-                      height: 75,
+                      height: 80,
                       width: 200,
                       color: emojiAndColor[emoji],
                     );
                   }
                 },
-                onWillAccept: (data) {
-                  if (data == emoji) {
-                    //print('Accepted');
-                    return true;
-                  } else {
-                    //print('Rejected');
-                    return false;
-                  }
-                }, // or (data) => data == emoji,
+                onWillAccept: (data) => data == emoji? true : false,
                 onAccept: (data) {
                   setState(() {
                     scoreIncrement++;

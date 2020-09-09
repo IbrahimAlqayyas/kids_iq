@@ -1,23 +1,23 @@
 import 'package:audioplayers/audio_cache.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
-/// Sound Effects
 class MusicPlay {
   final AudioCache _audioCache = AudioCache();
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 
   void backgroundPlay() async {
-    print('/////////////////   Background Play Method   /////////////////');
     await _assetsAudioPlayer.open(Audio("assets/audios/background.mp3"));
   }
 
   void backgroundPause() async {
-    print('/////////////////   Background Pause Method   /////////////////');
     await _assetsAudioPlayer.pause();
   }
 
+  void backgroundStop() async {
+    await _assetsAudioPlayer.stop();
+  }
+
   void backgroundResume() async {
-    print('/////////////////   Background Resume Method   /////////////////');
     await _assetsAudioPlayer.play();
   }
 

@@ -4,43 +4,44 @@ import 'package:flutter/services.dart';
 import 'package:kids_iq/music_play.dart';
 import 'package:kids_iq/widgets/celebration_overlay.dart';
 
-class ColorGame extends StatefulWidget {
-  const ColorGame({super.key});
+class AnimalGame extends StatefulWidget {
+  const AnimalGame({super.key});
 
   @override
-  State<ColorGame> createState() => _ColorGameState();
+  State<AnimalGame> createState() => _AnimalGameState();
 }
 
-class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
+class _AnimalGameState extends State<AnimalGame> with WidgetsBindingObserver {
   int scoreIncrement = 0;
   bool _showCelebration = false;
   final MusicPlay _mp = MusicPlay();
 
   Map<String, bool> score = {
-    '🍏': false,
-    '🍋': false,
-    '🍅': false,
-    '🍇': false,
-    '🥥': false,
-    '🥕': false,
+    '🐶': false,
+    '🐱': false,
+    '🐵': false,
+    '🐰': false,
+    '🐮': false,
+    '🐝': false,
   };
 
-  final Map<String, Color> emojiAndColor = {
-    '🍏': Colors.green,
-    '🍋': Colors.yellow,
-    '🍅': Colors.red,
-    '🍇': Colors.purple,
-    '🥥': Colors.brown,
-    '🥕': Colors.orange,
+  // Maps animal emoji to its target item
+  final Map<String, String> animalToFood = {
+    '🐶': '🍖', // Dog -> Bone
+    '🐱': '🐟', // Cat -> Fish
+    '🐵': '🍌', // Monkey -> Banana
+    '🐰': '🥕', // Rabbit -> Carrot
+    '🐮': '🌾', // Cow -> Grass/Hay
+    '🐝': '🍯', // Bee -> Honey
   };
 
-  final Map<String, String> colorNames = {
-    '🍏': 'Green',
-    '🍋': 'Yellow',
-    '🍅': 'Red',
-    '🍇': 'Purple',
-    '🥥': 'Brown',
-    '🥕': 'Orange',
+  final Map<String, Color> foodColors = {
+    '🍖': Colors.orangeAccent,
+    '🐟': Colors.lightBlue,
+    '🍌': Colors.amber,
+    '🥕': Colors.deepOrangeAccent,
+    '🌾': Colors.lightGreen,
+    '🍯': Colors.yellow.shade700,
   };
 
   int seed = 0;
@@ -73,25 +74,32 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final emojiKeys = emojiAndColor.keys.toList();
-    final leftList = List<String>.from(emojiKeys)..shuffle(Random(seed + 1));
-    final rightList = List<String>.from(emojiKeys)..shuffle(Random(seed));
+    final animalKeys = animalToFood.keys.toList();
+    final leftList = List<String>.from(animalKeys)..shuffle(Random(seed + 1));
+    final rightList = List<String>.from(animalKeys)..shuffle(Random(seed));
 
     final screenSize = MediaQuery.of(context).size;
     final double cardWidth = (screenSize.width * 0.52).clamp(160.0, 240.0);
-    final double itemHeight = ((screenSize.height - kToolbarHeight - MediaQuery.of(context).padding.top - 20) / 7.2).clamp(55.0, 80.0);
+    final double itemHeight =
+        ((screenSize.height - kToolbarHeight - MediaQuery.of(context).padding.top - 20) / 7.2)
+            .clamp(55.0, 80.0);
     final double emojiSize = (itemHeight * 0.95).clamp(50.0, 75.0);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.pink,
+        backgroundColor: Colors.purple,
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(width: 48),
+            IconButton(
+              icon: const Icon(Icons.arrow_back_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/color_game');
+              },
+            ),
             const Text(
-              'Game 1/3',
+              'Game 2/3',
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
             Text(
@@ -101,7 +109,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
             IconButton(
               icon: const Icon(Icons.arrow_forward_outlined, color: Colors.white),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/animal_game');
+                Navigator.pushReplacementNamed(context, '/shape_game');
               },
             ),
           ],
@@ -113,21 +121,21 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                /// Fruit Emojis Column
+                /// Animals Column
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: leftList.map((emoji) {
+                  children: leftList.map((animal) {
                     return Container(
                       width: emojiSize,
                       height: itemHeight,
                       alignment: Alignment.center,
-                      child: (score[emoji] ?? false)
+                      child: (score[animal] ?? false)
                           ? FittedBox(
                               fit: BoxFit.contain,
                               child: Text('✅', style: TextStyle(fontSize: itemHeight * 0.5)),
                             )
                           : Draggable<String>(
-                              data: emoji,
+                              data: animal,
                               feedback: Material(
                                 color: Colors.transparent,
                                 child: SizedBox(
@@ -135,7 +143,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                                   height: itemHeight * 1.15,
                                   child: FittedBox(
                                     fit: BoxFit.contain,
-                                    child: Text(emoji),
+                                    child: Text(animal),
                                   ),
                                 ),
                               ),
@@ -146,7 +154,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                                   opacity: 0.25,
                                   child: FittedBox(
                                     fit: BoxFit.contain,
-                                    child: Text(emoji),
+                                    child: Text(animal),
                                   ),
                                 ),
                               ),
@@ -155,7 +163,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                                 height: itemHeight,
                                 child: FittedBox(
                                   fit: BoxFit.contain,
-                                  child: Text(emoji),
+                                  child: Text(animal),
                                 ),
                               ),
                             ),
@@ -163,14 +171,17 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                   }).toList(),
                 ),
 
-                /// Colors Column
+                /// Food Targets Column
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: rightList.map((emoji) {
+                  children: rightList.map((animalKey) {
+                    final foodEmoji = animalToFood[animalKey]!;
+                    final foodColor = foodColors[foodEmoji] ?? Colors.purpleAccent;
+
                     return DragTarget<String>(
                       builder: (BuildContext context, List<String?> candidateData,
                           List<dynamic> rejectedData) {
-                        if (score[emoji] == true) {
+                        if (score[animalKey] == true) {
                           return Container(
                             alignment: Alignment.center,
                             height: itemHeight,
@@ -190,7 +201,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                             height: itemHeight,
                             width: cardWidth,
                             decoration: BoxDecoration(
-                              color: emojiAndColor[emoji],
+                              color: foodColor,
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: const [
                                 BoxShadow(
@@ -202,21 +213,10 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                             ),
                             child: Center(
                               child: FittedBox(
-                                fit: BoxFit.scaleDown,
+                                fit: BoxFit.contain,
                                 child: Text(
-                                  colorNames[emoji] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black45,
-                                        offset: Offset(1, 1),
-                                        blurRadius: 2,
-                                      ),
-                                    ],
-                                  ),
+                                  foodEmoji,
+                                  style: TextStyle(fontSize: itemHeight * 0.5),
                                 ),
                               ),
                             ),
@@ -224,11 +224,11 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                         }
                       },
                       onWillAcceptWithDetails: (details) =>
-                          (score[emoji] != true) && (details.data == emoji),
+                          (score[animalKey] != true) && (details.data == animalKey),
                       onAcceptWithDetails: (details) {
                         setState(() {
                           scoreIncrement++;
-                          score[emoji] = true;
+                          score[animalKey] = true;
                         });
                         if (scoreIncrement == 6) {
                           _mp.fullScorePlay();
@@ -249,7 +249,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
             CelebrationOverlay(
               onFinished: () {
                 if (mounted) {
-                  Navigator.pushReplacementNamed(context, '/animal_game');
+                  Navigator.pushReplacementNamed(context, '/shape_game');
                 }
               },
             ),

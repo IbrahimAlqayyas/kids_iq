@@ -1,35 +1,93 @@
-import 'package:audioplayers/audio_cache.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class MusicPlay {
-  final AudioCache _audioCache = AudioCache();
-  final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  static final MusicPlay _instance = MusicPlay._internal();
+  factory MusicPlay() => _instance;
+  MusicPlay._internal();
 
-  void backgroundPlay() async {
-    await _assetsAudioPlayer.open(Audio("assets/audios/background.mp3"));
+  final AudioPlayer _bgPlayer = AudioPlayer();
+  final AudioPlayer _sfxPlayer = AudioPlayer();
+  bool _isInitialized = false;
+
+  Future<void> _initAudio() async {
+    if (_isInitialized) return;
+
+    await _bgPlayer.setAudioContext(AudioContext(
+      android: const AudioContextAndroid(
+        usageType: AndroidUsageType.media,
+        contentType: AndroidContentType.music,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: {AVAudioSessionOptions.mixWithOthers},
+      ),
+    ));
+    await _bgPlayer.setReleaseMode(ReleaseMode.loop);
+
+    await _sfxPlayer.setAudioContext(AudioContext(
+      android: const AudioContextAndroid(
+        usageType: AndroidUsageType.assistanceSonification,
+        contentType: AndroidContentType.sonification,
+        audioFocus: AndroidAudioFocus.none,
+      ),
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: {AVAudioSessionOptions.mixWithOthers},
+      ),
+    ));
+
+    _isInitialized = true;
   }
 
-  void backgroundPause() async {
-    await _assetsAudioPlayer.pause();
+  Future<void> backgroundPlay() async {
+    await _initAudio();
+    if (_bgPlayer.state != PlayerState.playing) {
+      await _bgPlayer.play(AssetSource('audios/background.mp3'));
+    }
   }
 
-  void backgroundStop() async {
-    await _assetsAudioPlayer.stop();
+  Future<void> backgroundPause() async {
+    if (_bgPlayer.state == PlayerState.playing) {
+      await _bgPlayer.pause();
+    }
   }
 
-  void backgroundResume() async {
-    await _assetsAudioPlayer.play();
+  Future<void> backgroundStop() async {
+    await _bgPlayer.stop();
   }
 
-  void correctPlay() async {
-    await _audioCache.play("audios/correct.mp3");
+  Future<void> backgroundResume() async {
+    await _initAudio();
+    if (_bgPlayer.state == PlayerState.paused) {
+      await _bgPlayer.resume();
+    } else if (_bgPlayer.state != PlayerState.playing) {
+      await _bgPlayer.play(AssetSource('audios/background.mp3'));
+    }
   }
 
-  void shufflePlay() async{
-    await _audioCache.play("audios/shuffle.mp3");
+  Future<void> correctPlay() async {
+    await _initAudio();
+    await _sfxPlayer.stop();
+    await _sfxPlayer.play(AssetSource('audios/correct.mp3'));
   }
 
-  void fullScorePlay() async{
-    await _audioCache.play("audios/kidscheering.mp3");
+  Future<void> shufflePlay() async {
+    await _initAudio();
+    await _sfxPlayer.stop();
+    await _sfxPlayer.play(AssetSource('audios/shuffle.mp3'));
+  }
+
+  Future<void> fullScorePlay() async {
+    await _initAudio();
+    await _sfxPlayer.stop();
+    await _sfxPlayer.play(AssetSource('audios/kidscheering.mp3'));
+  }
+
+  void dispose() {
+    _bgPlayer.dispose();
+    _sfxPlayer.dispose();
   }
 }
+
+

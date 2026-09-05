@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kids_iq/music_play.dart';
-import 'package:kids_iq/widgets/completion_dialog.dart';
 import 'package:kids_iq/widgets/celebration_overlay.dart';
 
 class MissingPartGame extends StatefulWidget {
@@ -100,14 +99,19 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
               },
             ),
             const Text(
-              'Game 4/4',
+              'Game 4/5',
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
             Text(
               'Score $scoreIncrement/6',
               style: const TextStyle(fontSize: 14, color: Colors.white),
             ),
-            const SizedBox(width: 48),
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/habitat_game');
+              },
+            ),
           ],
         ),
       ),
@@ -245,12 +249,7 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
             CelebrationOverlay(
               onFinished: () {
                 if (mounted) {
-                  showGameCompletionDialog(
-                    context,
-                    onPlayAgain: () {
-                      Navigator.pushReplacementNamed(context, '/color_game');
-                    },
-                  );
+                  Navigator.pushReplacementNamed(context, '/habitat_game');
                 }
               },
             ),

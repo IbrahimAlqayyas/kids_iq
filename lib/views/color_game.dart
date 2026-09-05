@@ -82,7 +82,7 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
           children: [
             const SizedBox(width: 48),
             const Text(
-              'Game 1/4',
+              'Game 1/5',
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
             Text(

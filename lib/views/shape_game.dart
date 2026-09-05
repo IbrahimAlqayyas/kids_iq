@@ -81,7 +81,7 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
               },
             ),
             const Text(
-              'Game 3/4',
+              'Game 3/5',
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
             Text(

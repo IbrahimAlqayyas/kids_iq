@@ -34,15 +34,6 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
     '🥕': Colors.orange,
   };
 
-  final Map<String, String> colorNames = {
-    '🍏': 'Green',
-    '🍋': 'Yellow',
-    '🍅': 'Red',
-    '🍇': 'Purple',
-    '🥥': 'Brown',
-    '🥕': 'Orange',
-  };
-
   int seed = 0;
 
   @override
@@ -199,26 +190,6 @@ class _ColorGameState extends State<ColorGame> with WidgetsBindingObserver {
                                   offset: Offset(0, 3),
                                 ),
                               ],
-                            ),
-                            child: Center(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  colorNames[emoji] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black45,
-                                        offset: Offset(1, 1),
-                                        blurRadius: 2,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
                             ),
                           );
                         }

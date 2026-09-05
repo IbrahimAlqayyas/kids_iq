@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:kids_iq/music_play.dart';
 import 'package:kids_iq/widgets/completion_dialog.dart';
 import 'package:kids_iq/widgets/celebration_overlay.dart';
-import 'package:kids_iq/widgets/shape_icon.dart';
 
 class MissingPartGame extends StatefulWidget {
   const MissingPartGame({super.key});
@@ -19,12 +18,31 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
   final MusicPlay _mp = MusicPlay();
 
   Map<String, bool> score = {
-    'circle': false,
-    'square': false,
-    'triangle': false,
-    'star': false,
-    'diamond': false,
-    'heart': false,
+    '⚽': false, // Ball -> Goal
+    '🔑': false, // Key -> Lock
+    '✏️': false, // Pencil -> Book
+    '🍼': false, // Bottle -> Baby
+    '⚓': false, // Anchor -> Boat
+    '🥕': false, // Carrot -> Bunny
+  };
+
+  // Maps missing piece emoji to its matching target emoji
+  final Map<String, String> pieceToTarget = {
+    '⚽': '🥅',
+    '🔑': '🔒',
+    '✏️': '📖',
+    '🍼': '👶',
+    '⚓': '⛵',
+    '🥕': '🐰',
+  };
+
+  final Map<String, Color> targetColors = {
+    '🥅': Colors.lightBlue,
+    '🔒': Colors.amber.shade700,
+    '📖': Colors.deepOrange,
+    '👶': Colors.pinkAccent,
+    '⛵': Colors.teal,
+    '🐰': Colors.green,
   };
 
   int seed = 0;
@@ -57,9 +75,9 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
 
   @override
   Widget build(BuildContext context) {
-    final shapeKeys = score.keys.toList();
-    final leftList = List<String>.from(shapeKeys)..shuffle(Random(seed + 1));
-    final rightList = List<String>.from(shapeKeys)..shuffle(Random(seed));
+    final pieceKeys = pieceToTarget.keys.toList();
+    final leftList = List<String>.from(pieceKeys)..shuffle(Random(seed + 1));
+    final rightList = List<String>.from(pieceKeys)..shuffle(Random(seed));
 
     final screenSize = MediaQuery.of(context).size;
     final double cardWidth = (screenSize.width * 0.52).clamp(160.0, 240.0);
@@ -99,32 +117,29 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                /// Outlined Missing Shape Pieces Column
+                /// Missing Item Pieces Column
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: leftList.map((shapeKey) {
+                  children: leftList.map((piece) {
                     return Container(
                       width: emojiSize,
                       height: itemHeight,
                       alignment: Alignment.center,
-                      child: (score[shapeKey] ?? false)
+                      child: (score[piece] ?? false)
                           ? FittedBox(
                               fit: BoxFit.contain,
                               child: Text('✅', style: TextStyle(fontSize: itemHeight * 0.5)),
                             )
                           : Draggable<String>(
-                              data: shapeKey,
+                              data: piece,
                               feedback: Material(
                                 color: Colors.transparent,
                                 child: SizedBox(
                                   width: emojiSize * 1.15,
                                   height: itemHeight * 1.15,
-                                  child: Center(
-                                    child: ShapeIcon(
-                                      shape: shapeKey,
-                                      isOutlined: true,
-                                      size: emojiSize * 0.85,
-                                    ),
+                                  child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: Text(piece),
                                   ),
                                 ),
                               ),
@@ -133,24 +148,18 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
                                 height: itemHeight,
                                 child: Opacity(
                                   opacity: 0.25,
-                                  child: Center(
-                                    child: ShapeIcon(
-                                      shape: shapeKey,
-                                      isOutlined: true,
-                                      size: emojiSize * 0.7,
-                                    ),
+                                  child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: Text(piece),
                                   ),
                                 ),
                               ),
                               child: SizedBox(
                                 width: emojiSize,
                                 height: itemHeight,
-                                child: Center(
-                                  child: ShapeIcon(
-                                    shape: shapeKey,
-                                    isOutlined: true,
-                                    size: emojiSize * 0.7,
-                                  ),
+                                child: FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: Text(piece),
                                 ),
                               ),
                             ),
@@ -158,16 +167,17 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
                   }).toList(),
                 ),
 
-                /// Target Complete Solid Shapes Column
+                /// Target Matching Cards Column
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: rightList.map((shapeKey) {
-                    final cardColor = ShapeIcon.defaultColor(shapeKey);
+                  children: rightList.map((pieceKey) {
+                    final targetItem = pieceToTarget[pieceKey]!;
+                    final cardColor = targetColors[targetItem] ?? Colors.indigo;
 
                     return DragTarget<String>(
                       builder: (BuildContext context, List<String?> candidateData,
                           List<dynamic> rejectedData) {
-                        if (score[shapeKey] == true) {
+                        if (score[pieceKey] == true) {
                           return Container(
                             alignment: Alignment.center,
                             height: itemHeight,
@@ -198,22 +208,23 @@ class _MissingPartGameState extends State<MissingPartGame> with WidgetsBindingOb
                               ],
                             ),
                             child: Center(
-                              child: ShapeIcon(
-                                shape: shapeKey,
-                                isOutlined: false,
-                                size: itemHeight * 0.55,
-                                color: Colors.white,
+                              child: FittedBox(
+                                fit: BoxFit.contain,
+                                child: Text(
+                                  targetItem,
+                                  style: TextStyle(fontSize: itemHeight * 0.5),
+                                ),
                               ),
                             ),
                           );
                         }
                       },
                       onWillAcceptWithDetails: (details) =>
-                          (score[shapeKey] != true) && (details.data == shapeKey),
+                          (score[pieceKey] != true) && (details.data == pieceKey),
                       onAcceptWithDetails: (details) {
                         setState(() {
                           scoreIncrement++;
-                          score[shapeKey] = true;
+                          score[pieceKey] = true;
                         });
                         if (scoreIncrement == 6) {
                           _mp.fullScorePlay();

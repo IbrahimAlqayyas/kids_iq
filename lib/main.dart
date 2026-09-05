@@ -5,6 +5,7 @@ import 'package:kids_iq/views/color_game.dart';
 import 'package:kids_iq/views/animal_game.dart';
 
 import 'package:kids_iq/views/shape_game.dart';
+import 'package:kids_iq/views/missing_part_game.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,7 @@ void main() async {
         '/color_game': (_) => const ColorGame(),
         '/animal_game': (_) => const AnimalGame(),
         '/shape_game': (_) => const ShapeGame(),
+        '/missing_part_game': (_) => const MissingPartGame(),
       },
     ),
   );

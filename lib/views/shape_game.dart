@@ -2,8 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kids_iq/music_play.dart';
-import 'package:kids_iq/widgets/completion_dialog.dart';
 import 'package:kids_iq/widgets/celebration_overlay.dart';
+import 'package:kids_iq/widgets/shape_icon.dart';
 
 class ShapeGame extends StatefulWidget {
   const ShapeGame({super.key});
@@ -18,21 +18,12 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
   final MusicPlay _mp = MusicPlay();
 
   Map<String, bool> score = {
-    '🔴': false,
-    '🟩': false,
-    '🔺': false,
-    '⭐': false,
-    '💎': false,
-    '💜': false,
-  };
-
-  final Map<String, Color> shapeColors = {
-    '🔴': Colors.redAccent,
-    '🟩': Colors.green,
-    '🔺': Colors.deepOrangeAccent,
-    '⭐': Colors.amber.shade700,
-    '💎': Colors.teal,
-    '💜': Colors.purpleAccent,
+    'circle': false,
+    'square': false,
+    'triangle': false,
+    'star': false,
+    'diamond': false,
+    'heart': false,
   };
 
   int seed = 0;
@@ -90,14 +81,19 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
               },
             ),
             const Text(
-              'Game 3/3',
+              'Game 3/4',
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
             Text(
               'Score $scoreIncrement/6',
               style: const TextStyle(fontSize: 14, color: Colors.white),
             ),
-            const SizedBox(width: 48),
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/missing_part_game');
+              },
+            ),
           ],
         ),
       ),
@@ -127,9 +123,8 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
                                 child: SizedBox(
                                   width: emojiSize * 1.15,
                                   height: itemHeight * 1.15,
-                                  child: FittedBox(
-                                    fit: BoxFit.contain,
-                                    child: Text(shape),
+                                  child: Center(
+                                    child: ShapeIcon(shape: shape, size: emojiSize * 0.85),
                                   ),
                                 ),
                               ),
@@ -138,18 +133,16 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
                                 height: itemHeight,
                                 child: Opacity(
                                   opacity: 0.25,
-                                  child: FittedBox(
-                                    fit: BoxFit.contain,
-                                    child: Text(shape),
+                                  child: Center(
+                                    child: ShapeIcon(shape: shape, size: emojiSize * 0.7),
                                   ),
                                 ),
                               ),
                               child: SizedBox(
                                 width: emojiSize,
                                 height: itemHeight,
-                                child: FittedBox(
-                                  fit: BoxFit.contain,
-                                  child: Text(shape),
+                                child: Center(
+                                  child: ShapeIcon(shape: shape, size: emojiSize * 0.7),
                                 ),
                               ),
                             ),
@@ -161,7 +154,7 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: rightList.map((shapeKey) {
-                    final cardColor = shapeColors[shapeKey] ?? Colors.teal;
+                    final cardColor = ShapeIcon.defaultColor(shapeKey);
 
                     return DragTarget<String>(
                       builder: (BuildContext context, List<String?> candidateData,
@@ -197,12 +190,10 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
                               ],
                             ),
                             child: Center(
-                              child: FittedBox(
-                                fit: BoxFit.contain,
-                                child: Text(
-                                  shapeKey,
-                                  style: TextStyle(fontSize: itemHeight * 0.5),
-                                ),
+                              child: ShapeIcon(
+                                shape: shapeKey,
+                                size: itemHeight * 0.55,
+                                color: Colors.white,
                               ),
                             ),
                           );
@@ -234,12 +225,7 @@ class _ShapeGameState extends State<ShapeGame> with WidgetsBindingObserver {
             CelebrationOverlay(
               onFinished: () {
                 if (mounted) {
-                  showGameCompletionDialog(
-                    context,
-                    onPlayAgain: () {
-                      Navigator.pushReplacementNamed(context, '/color_game');
-                    },
-                  );
+                  Navigator.pushReplacementNamed(context, '/missing_part_game');
                 }
               },
             ),

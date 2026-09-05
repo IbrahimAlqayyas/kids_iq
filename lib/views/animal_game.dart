@@ -99,7 +99,7 @@ class _AnimalGameState extends State<AnimalGame> with WidgetsBindingObserver {
               },
             ),
             const Text(
-              'Game 2/3',
+              'Game 2/4',
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
             Text(
